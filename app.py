@@ -16,6 +16,21 @@ import webhook as wh
 import scheduler as sched
 from crypto import WXBizMsgCrypt, parse_message_xml
 
+# ---- lazy crypto init ----
+
+_wx_crypt = None
+
+def get_wx_crypt():
+    global _wx_crypt
+    if _wx_crypt is None:
+        _wx_crypt = WXBizMsgCrypt(
+            token=config.TOKEN,
+            encoding_aes_key=config.ENCODING_AES_KEY,
+            corp_id=getattr(config, "CORP_ID", ""),
+        )
+    return _wx_crypt
+
+
 # ---- 加载配置 ----
 try:
     import config_local as config  # type: ignore
@@ -27,11 +42,7 @@ app = Flask(__name__)
 db.init_db()
 
 # 初始化加解密实例
-wx_crypt = WXBizMsgCrypt(
-    token=config.TOKEN,
-    encoding_aes_key=config.ENCODING_AES_KEY,
-    corp_id=getattr(config, "CORP_ID", ""),
-)
+
 
 
 # ====================================================================
@@ -49,7 +60,7 @@ def callback():
         # URL 验证
         echostr = request.args.get("echostr", "")
         try:
-            plain = wx_crypt.verify_url(sig, ts, nonce, echostr)
+            plain = get_wx_crypt().verify_url(sig, ts, nonce, echostr)
             return plain, 200, {"Content-Type": "text/plain"}
         except Exception as e:
             app.logger.error(f"URL 验证失败: {e}")
@@ -58,7 +69,7 @@ def callback():
     # POST: 接收消息
     xml_body = request.data.decode("utf-8")
     try:
-        plain_xml = wx_crypt.decrypt_msg(sig, ts, nonce, xml_body)
+        plain_xml = get_wx_crypt().decrypt_msg(sig, ts, nonce, xml_body)
     except Exception as e:
         app.logger.error(f"消息解密失败: {e}")
         return "fail", 403
@@ -256,4 +267,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+
+
 

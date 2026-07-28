@@ -67,7 +67,7 @@ def callback():
             return "fail", 403
 
     # POST: 接收消息
-    xml_body = request.data.decode("utf-8")
+    xml_body = request.get_data(as_text=True); app.logger.info(f"Raw POST body ({len(xml_body)} bytes): {xml_body[:200]}")
     try:
         plain_xml = get_wx_crypt().decrypt_msg(sig, ts, nonce, xml_body)
     except Exception as e:
@@ -267,6 +267,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 

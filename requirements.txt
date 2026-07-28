@@ -1,0 +1,6 @@
+flask>=3.0
+requests>=2.31
+apscheduler>=3.10
+pycryptodome>=3.19
+python-dateutil>=2.8
+dateparser>=1.2

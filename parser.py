@@ -45,7 +45,8 @@ def _extract_deadline(text: str, now: datetime):
         h = int(m.group(3) or 0)
         mi = int(m.group(4) or 0) or (30 if m.group(5) else 0)
         p = m.group(2)
-        if p and p in ("下午","晚上","傍晚") and h < 12:`n            h += 12
+        if p and p in ('下午','晚上','傍晚') and h < 12:
+            h += 12
         return apply(base, h, mi)
 
     # 3. "下周一 下午3点"
@@ -67,7 +68,8 @@ def _extract_deadline(text: str, now: datetime):
         base = now + timedelta(days=days)
         h = int(m.group(3) or 0)
         mi = int(m.group(4) or 0) or (30 if m.group(5) else 0)
-        if m.group(2) and m.group(2) in ("下午","晚上","傍晚") and h < 12:`n            h += 12
+        if m.group(2) and m.group(2) in ("下午","晚上","傍晚") and h < 12:
+            h += 12
         r = apply(base, h, mi)
         return r if r > now else r + timedelta(days=7)
 
@@ -86,7 +88,8 @@ def _extract_deadline(text: str, now: datetime):
     if m:
         h = int(m.group(2))
         mi = int(m.group(3) or 0) or (30 if m.group(4) else 0)
-        if m.group(1) in (\"下午\",\"晚上\",\"傍晚\") and h < 12:`n
+        if m.group(1) in ("下午","晚上","傍晚") and h < 12:
+
             h += 12
         r = apply(now, h, mi)
         return r if r > now else r + timedelta(days=1)
@@ -118,6 +121,9 @@ def _clean_time_tokens(text: str) -> str:
         text = re.sub(pat, "", text)
     text = re.sub(r"\s{2,}", " ", text)
     return text.strip(" ,，。；;、")
+
+
+
 
 
 

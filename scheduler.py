@@ -1,4 +1,4 @@
-"""APScheduler 提醒调度器"""
+﻿"""APScheduler 提醒调度器"""
 
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -9,15 +9,11 @@ import db
 
 
 _scheduler = None
-_webhook_url = ""
-_check_seconds = 30
 
 
-def init_scheduler(webhook_url: str, check_interval_seconds: int = 30):
+def init_scheduler(check_interval_seconds: int = 30):
     """初始化后台调度器"""
-    global _scheduler, _webhook_url, _check_seconds
-    _webhook_url = webhook_url
-    _check_seconds = check_interval_seconds
+    global _scheduler
     _scheduler = BackgroundScheduler()
     _scheduler.add_job(
         _check_reminders,
@@ -37,6 +33,7 @@ def _check_reminders():
         desc = task["task_desc"]
         deadline = task["deadline"]
         user = task["user_name"]
+        chat_id = task["chat_id"]
 
         text = (
             f"  [任务提醒]\n"
@@ -47,7 +44,7 @@ def _check_reminders():
             text += f"创建者：{user}\n"
         text += "\n请及时处理！"
 
-        ok = webhook.send_text(_webhook_url, text)
+        ok = webhook.send_text(chat_id, text)
         if ok:
             db.mark_reminded(task["id"])
             print(f"[提醒] 已发送: {desc} (任务#{task['id']})")

@@ -1,18 +1,16 @@
 ﻿# ============================================================
-# 企业微信机器人 - 配置文件
-# 优先级：环境变量 > config_local.py > config.py 默认值
-# Railway 部署时，在 Dashboard 设置环境变量即可，无需修改此文件
+# 企业微信自建应用 - 配置文件
+# Railway 部署时在 Dashboard 设置环境变量
 # ============================================================
 
 import os
 
-# --- 群机器人 Webhook 地址（用于发送消息）---
-WEBHOOK_URL = os.environ.get(
-    "WECOM_WEBHOOK_URL",
-    "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=YOUR_KEY_HERE",
-)
+# --- 企业微信自建应用凭证 ---
+CORP_ID = os.environ.get("WECOM_CORP_ID", "")
+SECRET = os.environ.get("WECOM_SECRET", "")
+AGENT_ID = int(os.environ.get("WECOM_AGENT_ID", "0"))
 
-# --- 回调加密配置（用于接收消息）---
+# --- 回调加密配置 ---
 TOKEN = os.environ.get("WECOM_TOKEN", "YOUR_TOKEN")
 ENCODING_AES_KEY = os.environ.get("WECOM_ENCODING_AES_KEY", "YOUR_ENCODING_AES_KEY")
 

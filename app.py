@@ -100,7 +100,7 @@ def _handle_text_message(msg: dict):
             "  - @机器人 周五下午5点 发版本\n"
             "  - @机器人 3天后 交报告\n"
         )
-        wh.send_text(config.WEBHOOK_URL, help_text)
+        wh.send_text(msg.get('chat_id', ''), help_text)
         return
 
     # 计算提醒时间
@@ -126,7 +126,7 @@ def _handle_text_message(msg: dict):
         f"截止时间：{deadline.strftime('%Y-%m-%d %H:%M')}\n"
         f"将提前 {reminder_minutes} 分钟提醒"
     )
-    wh.send_text(config.WEBHOOK_URL, confirm)
+    wh.send_text(msg.get('chat_id', ''), confirm)
 
     app.logger.info(f"任务已创建 #{task_id}: {task_desc} -> {deadline}")
 
@@ -248,7 +248,6 @@ def add_task_manual():
 
 def main():
     sched.init_scheduler(
-        webhook_url=config.WEBHOOK_URL,
         check_interval_seconds=getattr(config, "CHECK_INTERVAL_SECONDS", 30),
     )
     print(f"  服务启动: http://0.0.0.0:{config.PORT}")
@@ -267,6 +266,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
